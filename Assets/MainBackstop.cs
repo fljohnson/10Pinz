@@ -22,4 +22,12 @@ public class MainBackstop : MonoBehaviour
 		}
 		Central.EndOfRoll();
 	}
+	
+	void OnCollisionEnter(Collision wham) {
+		if(wham.transform.name != "BowlingBall") {
+			return;
+		}
+		Central.EndOfRoll();
+	}
+		
 }
