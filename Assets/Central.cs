@@ -269,11 +269,17 @@ public class Central : MonoBehaviour
 		if(state != State.PRIMED) {
 			return;
 		}
+		#if UNITY_STANDALONE
+			state = State.LAUNCH;
+		#else
+		
 		TouchControl ctl = ctx.control as TouchControl;
 		
 		if(ctl.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Ended) {
 			state = State.LAUNCH;
 		}
+		#endif
+		
 	}
 	
 	public void OnMove(InputAction.CallbackContext ctx) {
