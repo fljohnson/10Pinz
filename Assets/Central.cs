@@ -48,6 +48,7 @@ public class Central : MonoBehaviour
 	public string[] rollMsg = {"Roll1","Roll2"};
 	public Dictionary<string,GameObject> hud ;
 		
+	static int stoppedPins;
 	
     // Start is called before the first frame update
     void Start()
@@ -108,10 +109,8 @@ public class Central : MonoBehaviour
 				}
 				break;
 			case State.COUNTING:
-				if(tMinus > 0f) {
-					tMinus -=Time.deltaTime;
-				}
-				else {
+				//wait until all pins stop moving, just in case of a wobbler (FLJ, 4/29/21)
+				if(stoppedPins == startingPins) {
 					Score();
 					if(currentFrame < maxFrames)
 					{
@@ -191,6 +190,7 @@ public class Central : MonoBehaviour
 	
 	
 	void Reset() {
+		stoppedPins=0;
 		Rigidbody rock = ball.GetComponent<Rigidbody>();
 		rock.velocity = Vector3.zero;
 		rock.angularVelocity = Vector3.zero;
@@ -217,6 +217,7 @@ public class Central : MonoBehaviour
 			if(!pin.activeInHierarchy) {
 				continue;
 			}
+			pin.GetComponent<Pin>().NewRoll();
 			pin.transform.position=pinsetter[pin.name];
 			Rigidbody block = pin.GetComponent<Rigidbody>();
 			block.angularVelocity = Vector3.zero;
@@ -233,6 +234,7 @@ public class Central : MonoBehaviour
 		SetContent("Roll2","");
 		foreach(GameObject pin in pins) {
 			pin.SetActive(true);
+			pin.GetComponent<Pin>().NewRoll();
 			pin.transform.position=pinsetter[pin.name];
 			Rigidbody block = pin.GetComponent<Rigidbody>();
 			block.angularVelocity = Vector3.zero;
@@ -417,5 +419,10 @@ public class Central : MonoBehaviour
 		else {
 			bonusFrame = -1;
 		}
+	}
+	
+	public static void UpCount(){
+		stoppedPins+=1;
+		Debug.Log(stoppedPins);
 	}
 }
